@@ -19,7 +19,7 @@ module.exports = (caminho = null, tamanhoArq = 3) => {
   if (caminho == null) {
     // Versão com armazenamento em SGBD
     const storage = multer.memoryStorage();
-    upload = multer({
+    return multer({
       storage: storage,
       limits: { fileSize: tamanhoArq * 1024 * 1024 },
       fileFilter: fileFilter,
@@ -39,38 +39,10 @@ module.exports = (caminho = null, tamanhoArq = 3) => {
         //renomeando o arquivo para evitar duplicidade de nomes
       },
     });
-    upload = multer({
+    return multer({
       storage: storagePasta,
       limits: { fileSize: tamanhoArq * 1024 * 1024 },
       fileFilter: fileFilter,
     });
   }
-
-  return (campoArquivo)=> {
-    return (req, res, next) => {
-        req.session.erroMulter = null;
-        upload.single(campoArquivo)(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-          req.session.erroMulter = {
-            value: '',
-            msg: err.message,
-            path: campoArquivo
-          }
-        } else if (err) {
-          req.session.erroMulter = {
-            value: '',
-            msg: err.message,
-            path: campoArquivo
-          }
-
-        }
-        next();
-      });
-    };
-  }
-
 };
-
-
-
- 

@@ -126,7 +126,7 @@ const usuarioController = {
                 complemento: results[0].complemento_usuario, logradouro: viaCep.logradouro,
                 bairro: viaCep.bairro, localidade: viaCep.localidade, uf: viaCep.uf,
                 img_perfil_pasta: results[0].img_perfil_pasta,
-                img_perfil_banco: results[0].img_perfil_banco,
+                img_perfil_banco: results[0].img_perfil_banco != null ? `data:image/jpeg;base64,${results[0].img_perfil_banco.toString('base64')}` : null,
                 nomeusu_usu: results[0].user_usuario, fone_usu: results[0].fone_usuario, senha_usu: ""
             }
 
@@ -146,9 +146,13 @@ const usuarioController = {
     gravarPerfil: async (req, res) => {
 
         const erros = validationResult(req);
-        if (!erros.isEmpty()) {
-            console.log(erros)
-            return res.render("pages/perfil", { listaErros: erros, dadosNotificacao: null, valores: req.body })
+        const erroMulter = req.session.erroMulter;
+        if (!erros.isEmpty() || erroMulter != null ) {
+            lista =  !erros.isEmpty() ? erros : {formatter:null, errors:[]};
+            if(erroMulter != null ){
+                lista.errors.push(erroMulter);
+            } 
+            return res.render("pages/perfil", { listaErros: lista, dadosNotificacao: null, valores: req.body })
         }
         try {
             var dadosForm = {
@@ -168,20 +172,20 @@ const usuarioController = {
             if (!req.file) {
                 console.log("Falha no carregamento");
             } else {
-                //Armazenando o caminho do arquivo salvo na pasta do projeto 
-                caminhoArquivo = "imagem/perfil/" + req.file.filename;
-                //Se houve alteração de imagem de perfil apaga a imagem anterior
-                if(dadosForm.img_perfil_pasta != caminhoArquivo ){
-                    removeImg(dadosForm.img_perfil_pasta);
-                }
-                dadosForm.img_perfil_pasta = caminhoArquivo;
-                dadosForm.img_perfil_banco = null;
+                // //Armazenando o caminho do arquivo salvo na pasta do projeto 
+                // caminhoArquivo = "imagem/perfil/" + req.file.filename;
+                // //Se houve alteração de imagem de perfil apaga a imagem anterior
+                // if(dadosForm.img_perfil_pasta != caminhoArquivo ){
+                //     removeImg(dadosForm.img_perfil_pasta);
+                // }
+                // dadosForm.img_perfil_pasta = caminhoArquivo;
+                // dadosForm.img_perfil_banco = null;
 
-                // //Armazenando o buffer de dados binários do arquivo 
-                // dadosForm.img_perfil_banco = req.file.buffer;
-                // //Apagando a imagem armazenada na pasta
-                // removeImg(dadosForm.img_perfil_pasta)
-                // dadosForm.img_perfil_pasta = null; 
+                //Armazenando o buffer de dados binários do arquivo 
+                dadosForm.img_perfil_banco = req.file.buffer;                
+                //Apagando a imagem armazenada na pasta
+                removeImg(dadosForm.img_perfil_pasta)
+                dadosForm.img_perfil_pasta = null; 
             }
             let resultUpdate = await usuario.update(dadosForm, req.session.autenticado.id);
             if (!resultUpdate.isEmpty) {
@@ -191,7 +195,7 @@ const usuarioController = {
                         autenticado: result[0].nome_usuario,
                         id: result[0].id_usuario,
                         tipo: result[0].id_tipo_usuario,
-                        img_perfil_banco: result[0].img_perfil_banco,
+                        img_perfil_banco: result[0].img_perfil_banco != null ? `data:image/jpeg;base64,${result[0].img_perfil_banco.toString('base64')}` : null,
                         img_perfil_pasta: result[0].img_perfil_pasta
                     };
                     req.session.autenticado = autenticado;

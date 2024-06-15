@@ -35,7 +35,7 @@ gravarUsuAutenticado = async (req, res, next) => {
           autenticado: results[0].nome_usuario,
           id: results[0].id_usuario,
           tipo: results[0].tipo_usuario,
-          img_perfil_banco: results[0].img_perfil_banco,
+          img_perfil_banco: results[0].img_perfil_banco != null ? `data:image/jpeg;base64,${results[0].img_perfil_banco.toString('base64')}` : null,
           img_perfil_pasta: results[0].img_perfil_pasta,
         };
       }

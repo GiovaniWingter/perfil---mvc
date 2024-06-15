@@ -17,13 +17,10 @@
         if(valores.img_perfil_pasta != null){
             arquivo.imagem = valores.img_perfil_pasta
         }else if(valores.img_perfil_banco != null){ 
-            const imgBuffer = Buffer.from(valores.img_perfil_banco);
-            const imgBase64 = imgBuffer.toString('base64');
-            const dataURL = `data:image/jpeg;base64,${imgBase64}`;
-            arquivo.imagem= dataURL;
+            arquivo.imagem = valores.img_perfil_banco;
         }
         let msgErro = ""
-        let avisoErro = {"nome_usu":"", "email_usu":"",nomeusu_usu:"", fone_usu:"", cep:""}
+        let avisoErro = {"nome_usu":"", "email_usu":"",nomeusu_usu:"", fone_usu:"", cep:"", imagem:""}
         if(listaErros){
             listaErros.errors.forEach(function(itemErro){
                 if(itemErro.path == "nome_usu"){
@@ -48,6 +45,10 @@
                 }
                 if(itemErro.path == "numero"){
                     avisoErro.numero = "erro";
+                    msgErro += `* ${itemErro.msg} <br>`;
+                }
+                if(itemErro.path == "imagem-perfil_usu"){
+                    avisoErro.imagem = "erro";
                     msgErro += `* ${itemErro.msg} <br>`;
                 }
             })
@@ -112,7 +113,7 @@
                     <input name="uf" type="text" id="uf" placeholder="UF" value="<%= valores.uf %>" readonly/>
                 </p>
                 <p>
-                    <input type="file" name="imagem-perfil_usu" id="imagem-perfil_usu" onchange="loadImg()">
+                    <input type="file" class="<%= avisoErro.imagem %>" name="imagem-perfil_usu" id="imagem-perfil_usu" onchange="loadImg()">
                     <img class="img-perfil"  id="img-preview" src="<%= arquivo.imagem %>">
                 </p>
                 <p>
