@@ -113,7 +113,7 @@
                     <input name="uf" type="text" id="uf" placeholder="UF" value="<%= valores.uf %>" readonly/>
                 </p>
                 <p>
-                    <input type="file" class="<%= avisoErro.imagem %>" name="imagem-perfil_usu" id="imagem-perfil_usu" onchange="loadImg()">
+                    <input type="file" class="<%= avisoErro.imagem %>" name="imagem-perfil_usu" id="imagem-perfil_usu" onchange="loadImg(event)">
                     <img class="img-perfil"  id="img-preview" src="<%= arquivo.imagem %>">
                 </p>
                 <p>

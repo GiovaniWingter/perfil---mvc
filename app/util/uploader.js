@@ -32,11 +32,11 @@ module.exports = (caminho = null, tamanhoArq = 3) => {
         callBack(null, caminho); // diretório de destino
       },
       filename: (req, file, callBack) => {
+        //renomeando o arquivo para evitar duplicidade de nomes
         callBack(
           null,
           file.fieldname + "-" + Date.now() + path.extname(file.originalname)
         );
-        //renomeando o arquivo para evitar duplicidade de nomes
       },
     });
     upload = multer({
@@ -45,7 +45,6 @@ module.exports = (caminho = null, tamanhoArq = 3) => {
       fileFilter: fileFilter,
     });
   }
-
   return (campoArquivo)=> {
     return (req, res, next) => {
         req.session.erroMulter = null;

@@ -10,8 +10,8 @@ const {
 
 const usuarioController = require("../controllers/usuarioController");
 
-// const uploadFile = require("../util/uploader")("./app/public/imagem/perfil/");
-const uploadFile = require("../util/uploader")();
+const uploadFile = require("../util/uploader")("./app/public/imagem/perfil/");
+// const uploadFile = require("../util/uploader")();
 
 router.get("/", verificarUsuAutenticado, function (req, res) {
   res.render("pages/index", {

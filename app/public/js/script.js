@@ -16,8 +16,9 @@ function notify(titulo, texto, tipo, posicao,duracao=3000) {
     })
 }
 
-function loadImg() {
-    $('#img-preview').attr('src', URL.createObjectURL(event.target.files[0]));
+function loadImg(event) {
+    var imgPreview = document.getElementById('img-preview');
+    imgPreview.src = URL.createObjectURL(event.target.files[0]);
 }
 
 
