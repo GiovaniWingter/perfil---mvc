@@ -13,6 +13,25 @@ const usuarioController = require("../controllers/usuarioController");
 const uploadFile = require("../util/uploader")("./app/public/imagem/perfil/");
 // const uploadFile = require("../util/uploader")();
 
+router.get(
+  "/perfil",
+  verificarUsuAutorizado([1, 2, 3], "pages/restrito"),
+  async function (req, res) {
+    usuarioController.mostrarPerfil(req, res);
+  }
+);
+
+router.post(
+  "/perfil",
+  uploadFile("imagem-perfil_usu"),
+  usuarioController.regrasValidacaoPerfil,
+  verificarUsuAutorizado([1, 2, 3], "pages/restrito"),
+  async function (req, res) {
+    usuarioController.gravarPerfil(req, res);
+  }
+);
+
+
 router.get("/", verificarUsuAutenticado, function (req, res) {
   res.render("pages/index", {
     autenticado: req.session.autenticado,
@@ -62,22 +81,6 @@ router.get(
   }
 );
 
-router.get(
-  "/perfil",
-  verificarUsuAutorizado([1, 2, 3], "pages/restrito"),
-  async function (req, res) {
-    usuarioController.mostrarPerfil(req, res);
-  }
-);
 
-router.post(
-  "/perfil",
-  uploadFile("imagem-perfil_usu"),
-  usuarioController.regrasValidacaoPerfil,
-  verificarUsuAutorizado([1, 2, 3], "pages/restrito"),
-  async function (req, res) {
-    usuarioController.gravarPerfil(req, res);
-  }
-);
 
 module.exports = router;

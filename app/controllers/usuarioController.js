@@ -184,7 +184,9 @@ const usuarioController = {
                 // //Armazenando o buffer de dados binários do arquivo 
                 // dadosForm.img_perfil_banco = req.file.buffer;                
                 // //Apagando a imagem armazenada na pasta
-                // removeImg(dadosForm.img_perfil_pasta)
+                // if(dadosForm.img_perfil_pasta != null ){
+                //     removeImg(dadosForm.img_perfil_pasta);
+                // }
                 // dadosForm.img_perfil_pasta = null; 
             }
             let resultUpdate = await usuario.update(dadosForm, req.session.autenticado.id);
