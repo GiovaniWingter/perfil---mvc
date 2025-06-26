@@ -22,6 +22,5 @@ var rotas = require("./app/routes/router");
 app.use("/", rotas);
 
 app.listen(process.env.APP_PORT, () => {
-  console.log(`Servidor online...\n
-    http://localhost:${process.env.APP_PORT}`);
+  console.log(`Servidor online...\nhttp://localhost:${process.env.APP_PORT}`);
 }); 
