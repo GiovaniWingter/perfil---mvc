@@ -13,7 +13,13 @@
 </head>
 
 <body>
-    <% 
+    <%
+    if (flash) { %>
+        <script>
+            notify("Erro!", "<%= flash.message %>", "<%= flash.type %>", "center")
+        </script>
+    <% } 
+    
     let msgErro = "";
     let avisoErro = {"nome_usu":"", "senha_usu":"",nomeusu_usu:"", senha_usu:""};
     if(listaErros){
@@ -44,15 +50,7 @@
             </script>
         <%
         }
-    }
-    if (dadosNotificacao) { %>
-        <script>
-                notify("<%= dadosNotificacao.titulo%>","<%= dadosNotificacao.mensagem%>", "<%= dadosNotificacao.tipo%>", "center")
-                if("<%= dadosNotificacao.tipo %>" == "success"){
-                    setTimeout(function(){window.location="/sair"}, 3000)
-                }                        
-        </script>
-    <% } %>
+    } %>
     <main>
         <div class="login-page">
 

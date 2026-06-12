@@ -14,6 +14,12 @@
 <body>
     <main>
         <% 
+            if (flash) { %>
+                <script>
+                    notify("Falha na autenicação!", "<%= flash.message %>", "<%= flash.type %>", "center")
+                </script>
+            <% }
+            
             let avisoErro = {"nome_usu":"", "senha_usu":""}
             let msgErro = ""
                 if(listaErros){
@@ -37,15 +43,7 @@
                         </script>
                     <%
                     }
-                }
-                if (dadosNotificacao) { %>
-                    <script>
-                            notify("<%= dadosNotificacao.titulo%>","<%= dadosNotificacao.mensagem%>", "<%= dadosNotificacao.tipo%>", "center")
-                            if("<%= dadosNotificacao.tipo %>" == "success"){
-                                setTimeout(function(){window.location="/"}, 3000)
-                            }                        
-                    </script>
-                <% } %>              
+                }%>              
                 <div class="login-page">
                     <div class="form-cadastro">
                         <h2>Login</h2>

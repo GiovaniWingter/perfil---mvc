@@ -1,4 +1,4 @@
-const usuario = require("../models/usuarioModel");
+const {usuarioModel} = require("../models/usuarioModel");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 var salt = bcrypt.genSaltSync(12);
@@ -8,7 +8,7 @@ const https = require('https');
 
 const usuarioController = {
 
-    regrasValidacaoFormLogin: [
+ regrasValidacaoFormLogin: [
         body("nome_usu")
             .isLength({ min: 8, max: 45 })
             .withMessage("O nome de usuário/e-mail deve ter de 8 a 45 caracteres"),
@@ -23,17 +23,21 @@ const usuarioController = {
         body("nomeusu_usu")
             .isLength({ min: 8, max: 45 }).withMessage("Nome de usuário deve ter de 8 a 45 caracteres!")
             .custom(async value => {
-                const nomeUsu = await usuario.findCampoCustom({ 'user_usuario': value });
-                if (nomeUsu > 0) {
-                    throw new Error('Nome de usuário em uso!');
+                if (value) {
+                    const nomeUsu = await usuarioModel.findCampoCustom({ 'user_usuario': value });
+                    if (nomeUsu > 0) {
+                        throw new Error('Nome de usuário em uso!');
+                    }
                 }
             }),
         body("email_usu")
             .isEmail().withMessage("Digite um e-mail válido!")
             .custom(async value => {
-                const nomeUsu = await usuario.findCampoCustom({ 'email_usuario': value });
-                if (nomeUsu > 0) {
-                    throw new Error('E-mail em uso!');
+                if (value) {
+                    const nomeUsu = await usuarioModel.findCampoCustom({ 'email_usuario': value });
+                    if (nomeUsu > 0) {
+                        throw new Error('E-mail em uso!');
+                    }
                 }
             }),
         body("senha_usu")
@@ -41,41 +45,30 @@ const usuarioController = {
             .withMessage("A senha deve ter no mínimo 8 caracteres (mínimo 1 letra maiúscula, 1 caractere especial e 1 número)")
     ],
 
-
-    regrasValidacaoPerfil: [
-        body("nome_usu")
-            .isLength({ min: 3, max: 45 }).withMessage("Nome deve ter de 3 a 45 caracteres!"),
-        body("nomeusu_usu")
-            .isLength({ min: 8, max: 45 }).withMessage("Nome de usuário deve ter de 8 a 45 caracteres!"),
-        body("email_usu")
-            .isEmail().withMessage("Digite um e-mail válido!"),
-        body("fone_usu")
-            .isLength({ min: 12, max: 15 }).withMessage("Digite um telefone válido!"),
-        body("cep")
-            .isPostalCode('BR').withMessage("Digite um CEP válido!"),
-        body("numero")
-            .isNumeric().withMessage("Digite um número para o endereço!"),
-        verificarUsuAutorizado([1, 2, 3], "pages/restrito"),
-    ],
-
     logar: (req, res) => {
         const erros = validationResult(req);
         if (!erros.isEmpty()) {
-            return res.render("pages/login", { listaErros: erros, dadosNotificacao: null })
+            return res.render("pages/login", { listaErros: erros })
         }
-        if (req.session.autenticado.autenticado != null) {
+        if (req.session.autenticado && req.session.autenticado.usuLogado != null) {
+            req.session.flash = {
+                type: 'success',
+                message: `Usuário ${req.session.autenticado.usuLogado} autenticado com sucesso!`
+            };
             res.redirect("/");
         } else {
-            res.render("pages/login", {
-                listaErros: null,
-                dadosNotificacao: { titulo: "Falha ao logar!", mensagem: "Usuário e/ou senha inválidos!", tipo: "error" }
-            })
+            req.session.flash = {
+                type: 'error',
+                message: `Nome de usuário/e-mail ou senha inválidos!`
+            };
+            res.redirect("/login");
+
         }
     },
 
-
-    cadastrar: (req, res) => {
+    cadastrar: async (req, res) => {
         const erros = validationResult(req);
+        console.log(erros);
         var dadosForm = {
             user_usuario: req.body.nomeusu_usu,
             senha_usuario: bcrypt.hashSync(req.body.senha_usu, salt),
@@ -83,29 +76,48 @@ const usuarioController = {
             email_usuario: req.body.email_usu,
         };
         if (!erros.isEmpty()) {
-            return res.render("pages/cadastro", { listaErros: erros, dadosNotificacao: null, valores: req.body })
+            console.log(erros);
+            return res.render("pages/cadastro", { listaErros: erros, valores: req.body })
         }
         try {
-            let create = usuario.create(dadosForm);
-            res.render("pages/cadastro", {
-                listaErros: null, dadosNotificacao: {
-                    titulo: "Cadastro realizado!", mensagem: "Novo usuário criado com sucesso!", tipo: "success"
-                }, valores: req.body
-            })
+            let create = await usuarioModel.create(dadosForm);
+            console.log(create);
+            if (create == null) {
+                req.session.flash = {
+                    type: 'error',
+                    message: `Erro ao cadastrar usuário: ${dadosForm.user_usuario}`
+                };
+                req.session.valoresForm = req.body;
+                return res.redirect("/cadastro");
+            } else {
+                req.session.flash = {
+                    type: 'success',
+                    message: `Usuário: ${dadosForm.user_usuario}, cadastrado com sucesso!`
+                };
+                res.redirect("/");
+            }
         } catch (e) {
             console.log(e);
-            res.render("pages/cadastro", {
-                listaErros: erros, dadosNotificacao: {
-                    titulo: "Erro ao cadastrar!", mensagem: "Verifique os valores digitados!", tipo: "error"
-                }, valores: req.body
-            })
+            res.render("pages/cadastro", { listaErros: erros, valores: req.body })
         }
+    },
+
+    formCadastro: (req, res) => {
+        const valoresForm = req.session.valoresForm || {}
+        const valores = {
+            nome_usu: valoresForm.nome_usu || "",
+            nomeusu_usu: valoresForm.nomeusu_usu || "",
+            email_usu: valoresForm.email_usu || "",
+            senha_usu: valoresForm.senha_usu || ""
+        }
+        res.render("pages/cadastro", { listaErros: null, valores: valores });
+
     },
 
 
     mostrarPerfil: async (req, res) => {
         try {
-            let results = await usuario.findId(req.session.autenticado.id);
+            let results = await usuarioModel.findId(req.session.autenticado.id);
             if (results[0].cep_usuario != null) {
                 const httpsAgent = new https.Agent({
                     rejectUnauthorized: false,
@@ -130,11 +142,11 @@ const usuarioController = {
                 nomeusu_usu: results[0].user_usuario, fone_usu: results[0].fone_usuario, senha_usu: ""
             }
 
-            res.render("pages/perfil", { listaErros: null, dadosNotificacao: null, valores: campos })
+            res.render("pages/perfil", { listaErros: null, valores: campos })
         } catch (e) {
             console.log(e);
             res.render("pages/perfil", {
-                listaErros: null, dadosNotificacao: null, valores: {
+                listaErros: null, valores: {
                     img_perfil_banco: "", img_perfil_pasta: "", nome_usu: "", email_usu: "",
                     nomeusu_usu: "", fone_usu: "", senha_usu: "", cep: "", numero: "", complemento: "",
                     logradouro: "", bairro: "", localidade: "", uf: ""
@@ -152,7 +164,7 @@ const usuarioController = {
             if(erroMulter != null ){
                 lista.errors.push(erroMulter);
             } 
-            return res.render("pages/perfil", { listaErros: lista, dadosNotificacao: null, valores: req.body })
+            return res.render("pages/perfil", { listaErros: lista, valores: req.body })
         }
         try {
             var dadosForm = {
@@ -189,10 +201,10 @@ const usuarioController = {
                 // }
                 // dadosForm.img_perfil_pasta = null; 
             }
-            let resultUpdate = await usuario.update(dadosForm, req.session.autenticado.id);
+            let resultUpdate = await usuarioModel.update(dadosForm, req.session.autenticado.id);
             if (!resultUpdate.isEmpty) {
                 if (resultUpdate.changedRows == 1) {
-                    var result = await usuario.findId(req.session.autenticado.id);
+                    var result = await usuarioModel.findId(req.session.autenticado.id);
                     var autenticado = {
                         autenticado: result[0].nome_usuario,
                         id: result[0].id_usuario,
@@ -206,14 +218,14 @@ const usuarioController = {
                         img_perfil_pasta: result[0].img_perfil_pasta, img_perfil_banco: result[0].img_perfil_banco,
                         nomeusu_usu: result[0].user_usuario, fone_usu: result[0].fone_usuario, senha_usu: ""
                     }
-                    res.render("pages/perfil", { listaErros: null, dadosNotificacao: { titulo: "Perfil! atualizado com sucesso", mensagem: "Alterações Gravadas", tipo: "success" }, valores: campos });
+                    res.render("pages/perfil", { listaErros: null, valores: campos });
                 }else{
-                    res.render("pages/perfil", { listaErros: null, dadosNotificacao: { titulo: "Perfil! atualizado com sucesso", mensagem: "Sem alterações", tipo: "success" }, valores: dadosForm });
+                    res.render("pages/perfil", { listaErros: null,  valores: dadosForm });
                 }
             }
         } catch (e) {
             console.log(e)
-            res.render("pages/perfil", { listaErros: erros, dadosNotificacao: { titulo: "Erro ao atualizar o perfil!", mensagem: "Verifique os valores digitados!", tipo: "error" }, valores: req.body })
+            res.render("pages/perfil", { listaErros: erros, valores: req.body })
         }
     }
 }

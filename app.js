@@ -10,7 +10,16 @@ app.use(
     saveUninitialized: false,
 }));
 
+
 app.use(express.static("./app/public"));
+
+// middleware para flash messages
+
+app.use((req, res, next) => {
+  res.locals.flash = req.session.flash || null;
+  delete req.session.flash;
+  next();
+});
 
 app.set("view engine", "ejs");
 app.set("views", "./app/views");
