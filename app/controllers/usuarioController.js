@@ -232,12 +232,6 @@ const usuarioController = {
                         type: 'success',
                         message: `Perfil do usuário: ${dadosForm.user_usuario}, atualizado com sucesso!`
                     };
-                    var campos = {
-                        nome_usu: result[0].nome_usuario, email_usu: result[0].email_usuario,
-                        img_perfil_pasta: result[0].img_perfil_pasta, img_perfil_banco: result[0].img_perfil_banco,
-                        nomeusu_usu: result[0].user_usuario, fone_usu: result[0].fone_usuario, senha_usu: ""
-                    }
-                    res.locals.valores = campos;
                     res.redirect("/perfil");
                 } else {
                     console.log("3");
