@@ -33,9 +33,9 @@ const usuarioModel = {
     findId: async (id) => {
         try {
             const [resultados] = await pool.query(
-                "SELECT u.id_usuario, u.nome_usuario, u.user_usuario, " +
+                "SELECT u.id_usuario, u.nome_usuario, u.user_usuario, u.img_perfil_banco, u.img_perfil_pasta, " +
                 "u.senha_usuario, u.email_usuario, u.fone_usuario, u.tipo_usuario, " +
-                "u.status_usuario, t.tipo_usuario, t.descricao_usuario " +
+                "u.status_usuario, u.tipo_usuario, t.descricao_usuario " +
                 "FROM usuario u, tipo_usuario t where u.status_usuario = 1 and " +
                 "u.tipo_usuario = t.id_tipo_usuario and u.id_usuario = ? ", [id]
             )
@@ -78,15 +78,12 @@ const usuarioModel = {
         }
     },
 
-    update: async (camposForm) => {
+    update: async (camposForm, id) => {
         try {
             const [resultados] = await pool.query(
-                "UPDATE usuario SET nome_usuario = ?, user_usuario = ?, senha_usuario = ?,  " +
-                " email_usuario = ?, fone_usuario = ?, tipo_usuario = ?, status_usuario = ? " +
+                "UPDATE usuario SET ? " +
                 " WHERE id_usuario = ?",
-                [camposForm.nome_usuario, camposForm.user_usuario, camposForm.senha_usuario,
-                camposForm.email_usuario, camposForm.fone_usuario, camposForm.tipo_usuario,
-                camposForm.status_usuario, camposForm.id_usuario]
+                [camposForm, id]
             )
             return resultados;
         } catch (error) {

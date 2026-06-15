@@ -1,14 +1,14 @@
-const {usuarioModel} = require("../models/usuarioModel");
+const { usuarioModel } = require("../models/usuarioModel");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 var salt = bcrypt.genSaltSync(12);
-const {removeImg} = require("../util/removeImg");
+const { removeImg } = require("../util/removeImg");
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const https = require('https');
 
 const usuarioController = {
 
- regrasValidacaoFormLogin: [
+    regrasValidacaoFormLogin: [
         body("nome_usu")
             .isLength({ min: 8, max: 45 })
             .withMessage("O nome de usuário/e-mail deve ter de 8 a 45 caracteres"),
@@ -43,6 +43,22 @@ const usuarioController = {
         body("senha_usu")
             .isStrongPassword()
             .withMessage("A senha deve ter no mínimo 8 caracteres (mínimo 1 letra maiúscula, 1 caractere especial e 1 número)")
+    ],
+
+    regrasValidacaoFormPerfil: [
+        body("nome_usu")
+            .isLength({ min: 3, max: 45 }).withMessage("Nome deve ter de 3 a 45 caracteres!"),
+        body("nomeusu_usu")
+            .isLength({ min: 8, max: 45 }).withMessage("Nome de usuário deve ter de 8 a 45 caracteres!"),
+        body("email_usu")
+            .isEmail().withMessage("Digite um e-mail válido!"),
+        body("fone_usu")
+            .isLength({ min: 12, max: 15 }).withMessage("Digite um telefone válido!"),
+        body("cep")
+            .isPostalCode('BR').withMessage("Digite um CEP válido!"),
+        body("numero")
+            .isNumeric().withMessage("Digite um número para o endereço!"),
+        verificarUsuAutorizado([1, 2, 3], "pages/restrito"),
     ],
 
     logar: (req, res) => {
@@ -125,15 +141,15 @@ const usuarioController = {
                 const response = await fetch(`https://viacep.com.br/ws/${results[0].cep_usuario}/json/`,
                     { method: 'GET', headers: null, body: null, agent: httpsAgent, });
                 var viaCep = await response.json();
-                var cep = results[0].cep_usuario.slice(0,5)+ "-"+results[0].cep_usuario.slice(5)
-            }else{
-                var viaCep = {logradouro:"", bairro:"", localidade:"", uf:""}
+                var cep = results[0].cep_usuario.slice(0, 5) + "-" + results[0].cep_usuario.slice(5)
+            } else {
+                var viaCep = { logradouro: "", bairro: "", localidade: "", uf: "" }
                 var cep = null;
             }
 
             let campos = {
                 nome_usu: results[0].nome_usuario, email_usu: results[0].email_usuario,
-                cep:  cep, 
+                cep: cep,
                 numero: results[0].numero_usuario,
                 complemento: results[0].complemento_usuario, logradouro: viaCep.logradouro,
                 bairro: viaCep.bairro, localidade: viaCep.localidade, uf: viaCep.uf,
@@ -156,14 +172,14 @@ const usuarioController = {
     },
 
     gravarPerfil: async (req, res) => {
-
         const erros = validationResult(req);
         const erroMulter = req.session.erroMulter;
-        if (!erros.isEmpty() || erroMulter != null ) {
-            lista =  !erros.isEmpty() ? erros : {formatter:null, errors:[]};
-            if(erroMulter != null ){
+        if (!erros.isEmpty() || erroMulter != null) {
+            lista = !erros.isEmpty() ? erros : { formatter: null, errors: [] };
+            if (erroMulter != null) {
                 lista.errors.push(erroMulter);
-            } 
+            }
+            console.log("1");
             return res.render("pages/perfil", { listaErros: lista, valores: req.body })
         }
         try {
@@ -172,7 +188,7 @@ const usuarioController = {
                 nome_usuario: req.body.nome_usu,
                 email_usuario: req.body.email_usu,
                 fone_usuario: req.body.fone_usu,
-                cep_usuario: req.body.cep.replace("-",""),
+                cep_usuario: req.body.cep.replace("-", ""),
                 numero_usuario: req.body.numero,
                 complemento_usuario: req.body.complemento,
                 img_perfil_banco: req.session.autenticado.img_perfil_banco,
@@ -187,7 +203,7 @@ const usuarioController = {
                 //Armazenando o caminho do arquivo salvo na pasta do projeto 
                 caminhoArquivo = "imagem/perfil/" + req.file.filename;
                 //Se houve alteração de imagem de perfil apaga a imagem anterior
-                if(dadosForm.img_perfil_pasta != caminhoArquivo ){
+                if (dadosForm.img_perfil_pasta != caminhoArquivo) {
                     removeImg(dadosForm.img_perfil_pasta);
                 }
                 dadosForm.img_perfil_pasta = caminhoArquivo;
@@ -208,24 +224,34 @@ const usuarioController = {
                     var autenticado = {
                         autenticado: result[0].nome_usuario,
                         id: result[0].id_usuario,
-                        tipo: result[0].id_tipo_usuario,
+                        tipo:result[0].tipo_usuario,
                         img_perfil_banco: result[0].img_perfil_banco != null ? `data:image/jpeg;base64,${result[0].img_perfil_banco.toString('base64')}` : null,
                         img_perfil_pasta: result[0].img_perfil_pasta
                     };
                     req.session.autenticado = autenticado;
+                    req.session.flash = {
+                        type: 'success',
+                        message: `Perfil do usuário: ${dadosForm.user_usuario}, atualizado com sucesso!`
+                    };
                     var campos = {
                         nome_usu: result[0].nome_usuario, email_usu: result[0].email_usuario,
                         img_perfil_pasta: result[0].img_perfil_pasta, img_perfil_banco: result[0].img_perfil_banco,
                         nomeusu_usu: result[0].user_usuario, fone_usu: result[0].fone_usuario, senha_usu: ""
                     }
-                    res.render("pages/perfil", { listaErros: null, valores: campos });
-                }else{
-                    res.render("pages/perfil", { listaErros: null,  valores: dadosForm });
+                    console.log("2");
+                    res.locals.valores = campos;
+                    console.log("req.session.autenticado");
+                    console.log(req.session.autenticado);
+                    res.redirect("/perfil");
+                } else {
+                    console.log("3");
+                    res.render("pages/perfil", { listaErros: null, valores: dadosForm });
                 }
             }
         } catch (e) {
             console.log(e)
-            res.render("pages/perfil", { listaErros: erros, valores: req.body })
+                    console.log("4");
+                    res.render("pages/perfil", { listaErros: erros, valores: req.body })
         }
     }
 }

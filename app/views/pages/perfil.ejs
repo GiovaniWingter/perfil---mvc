@@ -12,58 +12,63 @@
 </head>
 <body>
     <main>
-        <%
-        let arquivo = {"imagem":"imagem/img-perfil.png"}
-        if(valores.img_perfil_pasta != null){
-            arquivo.imagem = valores.img_perfil_pasta
-        }else if(valores.img_perfil_banco != null){ 
-            arquivo.imagem = valores.img_perfil_banco;
-        }
-        let msgErro = ""
-        let avisoErro = {"nome_usu":"", "email_usu":"",nomeusu_usu:"", fone_usu:"", cep:"", imagem:""}
-        if(listaErros){
-            listaErros.errors.forEach(function(itemErro){
-                if(itemErro.path == "nome_usu"){
-                    avisoErro.nome_usu = "erro";
-                    msgErro += `* ${itemErro.msg} <br>`;
-                }
-                if(itemErro.path == "fone_usu"){
-                    avisoErro.fone_usu = "erro";
-                    msgErro += `* ${itemErro.msg} <br>`;
-                }
-                if(itemErro.path == "nomeusu_usu"){
-                    avisoErro.nomeusu_usu = "erro";
-                    msgErro += `* ${itemErro.msg} <br>`;
-                }
-                if(itemErro.path == "email_usu"){
-                    avisoErro.email_usu = "erro";
-                    msgErro += `* ${itemErro.msg} <br>`;
-                }
-                if(itemErro.path == "cep"){
-                    avisoErro.cep = "erro";
-                    msgErro += `* ${itemErro.msg} <br>`;
-                }
-                if(itemErro.path == "numero"){
-                    avisoErro.numero = "erro";
-                    msgErro += `* ${itemErro.msg} <br>`;
-                }
-                if(itemErro.path == "imagem-perfil_usu"){
-                    avisoErro.imagem = "erro";
-                    msgErro += `* ${itemErro.msg} <br>`;
-                }
-            })
-            if(msgErro != ""){
-                %>
-                    <script>
-                        let msgErro ="<%= msgErro %>"
-                        notify("Erro no preenchimento",
-                        "Verifique o(s) campo(s): <br>" + msgErro.replace(/&lt;/g,"<").replace(/&gt;/g,">"), 
-                        "error", "center",5000)                        
-                    </script>
-                    <%
-
+        <% if (flash) { %>
+            <script>
+                notify("Sucesso!", "<%= flash.message %>", "<%= flash.type %>", "center")
+            </script>
+        <% }
+            let arquivo = {"imagem":"imagem/img-perfil.png"}
+            if(valores.img_perfil_pasta != null){
+                arquivo.imagem = valores.img_perfil_pasta
+            }else if(valores.img_perfil_banco != null){ 
+                arquivo.imagem = valores.img_perfil_banco;
             }
-        } %>
+            let msgErro = ""
+            let avisoErro = {"nome_usu":"", "email_usu":"",nomeusu_usu:"", fone_usu:"", cep:"", imagem:""}
+            if(listaErros){
+                listaErros.errors.forEach(function(itemErro){
+                    if(itemErro.path == "nome_usu"){
+                        avisoErro.nome_usu = "erro";
+                        msgErro += `* ${itemErro.msg} <br>`;
+                    }
+                    if(itemErro.path == "fone_usu"){
+                        avisoErro.fone_usu = "erro";
+                        msgErro += `* ${itemErro.msg} <br>`;
+                    }
+                    if(itemErro.path == "nomeusu_usu"){
+                        avisoErro.nomeusu_usu = "erro";
+                        msgErro += `* ${itemErro.msg} <br>`;
+                    }
+                    if(itemErro.path == "email_usu"){
+                        avisoErro.email_usu = "erro";
+                        msgErro += `* ${itemErro.msg} <br>`;
+                    }
+                    if(itemErro.path == "cep"){
+                        avisoErro.cep = "erro";
+                        msgErro += `* ${itemErro.msg} <br>`;
+                    }
+                    if(itemErro.path == "numero"){
+                        avisoErro.numero = "erro";
+                        msgErro += `* ${itemErro.msg} <br>`;
+                    }
+                    if(itemErro.path == "imagem-perfil_usu"){
+                        avisoErro.imagem = "erro";
+                        msgErro += `* ${itemErro.msg} <br>`;
+                    }
+                })
+                if(msgErro != ""){
+                    %>
+                        <script>
+                            let msgErro ="<%= msgErro %>"
+                            notify("Erro no preenchimento",
+                            "Verifique o(s) campo(s): <br>" + msgErro.replace(/&lt;/g,"<").replace(/&gt;/g,">"), 
+                            "error", "center",5000)                        
+                        </script>
+                        <%
+
+                }
+            }
+        %>
         
         <div id="perfil">
             <form action="/perfil" method="post" enctype="multipart/form-data">
