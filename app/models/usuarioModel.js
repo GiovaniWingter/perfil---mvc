@@ -6,7 +6,7 @@ const usuarioModel = {
             const [resultados] = await pool.query(
                 "SELECT u.id_usuario, u.nome_usuario, u.user_usuario, " +
                 "u.senha_usuario, u.email_usuario, u.fone_usuario, u.tipo_usuario, " +
-                "u.status_usuario, t.tipo_usuario, t.descricao_usuario " +
+                "u.status_usuario, t.tipo_usuario, t.descricao_usuario, u.cep_usuario, u.complemento_usuario, u.numero_usuario  " +
                 "FROM usuario u, tipo_usuario t where u.status_usuario = 1 and " +
                 "u.tipo_usuario = t.id_tipo_usuario"
             )
@@ -35,7 +35,7 @@ const usuarioModel = {
             const [resultados] = await pool.query(
                 "SELECT u.id_usuario, u.nome_usuario, u.user_usuario, u.img_perfil_banco, u.img_perfil_pasta, " +
                 "u.senha_usuario, u.email_usuario, u.fone_usuario, u.tipo_usuario, " +
-                "u.status_usuario, u.tipo_usuario, t.descricao_usuario " +
+                "u.status_usuario, u.tipo_usuario, t.descricao_usuario, u.cep_usuario, u.complemento_usuario, u.numero_usuario " +
                 "FROM usuario u, tipo_usuario t where u.status_usuario = 1 and " +
                 "u.tipo_usuario = t.id_tipo_usuario and u.id_usuario = ? ", [id]
             )

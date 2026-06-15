@@ -146,7 +146,7 @@ const usuarioController = {
                 var viaCep = { logradouro: "", bairro: "", localidade: "", uf: "" }
                 var cep = null;
             }
-
+            console.log(cep);
             let campos = {
                 nome_usu: results[0].nome_usuario, email_usu: results[0].email_usuario,
                 cep: cep,
@@ -179,7 +179,6 @@ const usuarioController = {
             if (erroMulter != null) {
                 lista.errors.push(erroMulter);
             }
-            console.log("1");
             return res.render("pages/perfil", { listaErros: lista, valores: req.body })
         }
         try {
@@ -188,7 +187,7 @@ const usuarioController = {
                 nome_usuario: req.body.nome_usu,
                 email_usuario: req.body.email_usu,
                 fone_usuario: req.body.fone_usu,
-                cep_usuario: req.body.cep.replace("-", ""),
+                cep_usuario: req.body.cep ? req.body.cep.replace("-", "") : null,
                 numero_usuario: req.body.numero,
                 complemento_usuario: req.body.complemento,
                 img_perfil_banco: req.session.autenticado.img_perfil_banco,
@@ -222,7 +221,7 @@ const usuarioController = {
                 if (resultUpdate.changedRows == 1) {
                     var result = await usuarioModel.findId(req.session.autenticado.id);
                     var autenticado = {
-                        autenticado: result[0].nome_usuario,
+                        usuLogado: result[0].nome_usuario,
                         id: result[0].id_usuario,
                         tipo:result[0].tipo_usuario,
                         img_perfil_banco: result[0].img_perfil_banco != null ? `data:image/jpeg;base64,${result[0].img_perfil_banco.toString('base64')}` : null,
@@ -238,10 +237,7 @@ const usuarioController = {
                         img_perfil_pasta: result[0].img_perfil_pasta, img_perfil_banco: result[0].img_perfil_banco,
                         nomeusu_usu: result[0].user_usuario, fone_usu: result[0].fone_usuario, senha_usu: ""
                     }
-                    console.log("2");
                     res.locals.valores = campos;
-                    console.log("req.session.autenticado");
-                    console.log(req.session.autenticado);
                     res.redirect("/perfil");
                 } else {
                     console.log("3");
@@ -250,7 +246,6 @@ const usuarioController = {
             }
         } catch (e) {
             console.log(e)
-                    console.log("4");
                     res.render("pages/perfil", { listaErros: erros, valores: req.body })
         }
     }
