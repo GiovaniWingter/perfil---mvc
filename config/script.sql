@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `autenticacao` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `autenticacao`;
--- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
 --
 -- Host: localhost    Database: autenticacao
 -- ------------------------------------------------------
--- Server version	8.0.31
+-- Server version	8.0.28
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -125,7 +125,7 @@ CREATE TABLE `usuario` (
   PRIMARY KEY (`id_usuario`),
   KEY `fk_usuario_tipo_usuario_idx` (`tipo_usuario`),
   CONSTRAINT `fk_usuario_tipo_usuario` FOREIGN KEY (`tipo_usuario`) REFERENCES `tipo_usuario` (`id_tipo_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +134,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Helvética','helvinha','$2a$12$J1piFIoOATeGAlIOPW0HSuo.pWb/tBJabaoyNNMkxwgrLAG70MYFK','helvinh@gmail.com','1234567890123','06386670','13','próx. esquina 2',NULL,NULL,3,1),(2,'Ana Julia','anajulia','$2a$12$PlgVYz2SaOfcKcKt6kqrCevcRMRLZSoIw43cCo8cOF8DNECZ9vgRa','ana@julia.com','112342358923',NULL,NULL,NULL,NULL,NULL,2,1);
+INSERT INTO `usuario` VALUES (1,'Helvética','helvinha','$2a$12$J1piFIoOATeGAlIOPW0HSuo.pWb/tBJabaoyNNMkxwgrLAG70MYFK','helvinh@gmail.com','1234567890123','06342180','2333','','imagem/perfil/imagem-perfil_usu-1781277922760.png',NULL,3,1),(2,'Ana Julia','anajulia','$2a$12$PlgVYz2SaOfcKcKt6kqrCevcRMRLZSoIw43cCo8cOF8DNECZ9vgRa','ana@julia.com','112342358923',NULL,NULL,NULL,NULL,NULL,1,1),(3,'helvinha','anajulias','$2b$12$Ej3/ctkmG/QP0KhesxOlf.piGc6lCIIHb4omoxDrcr.g1qDNXd5SG','gigiowingter@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,1,1),(4,'jocaboboca','jocaboboca','$2b$12$g12B5MAk7xI0Xsjnrinp4eDnODVEmlbm7Nuwz2/lnsOaZVIi19nj6','joc@boboca.com',NULL,NULL,NULL,NULL,NULL,NULL,1,1),(5,'João Carlos','joca_boboca','$2b$12$ohZFMmrpNkklkta3M53yW.3BsINtd9.A/mJDpjXJTYzH.uDCPGItS','joca@boboca.com',NULL,NULL,NULL,NULL,NULL,NULL,1,1),(6,'helvinha','helvinhas','$2b$12$NCy5negkyScXVIr16ffoE.2tEVX80zaAoRyrbVsD7LHyZOmyq6mU2','helvinhsa@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,1,1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -147,4 +147,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-14 16:41:51
+-- Dump completed on 2026-06-19  8:17:21

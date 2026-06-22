@@ -1,4 +1,4 @@
 /node_modules
-app/public/imagem
+/app/public/imagem
 .env
 package-lock.json
