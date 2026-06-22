@@ -8,7 +8,7 @@ const {
   verificarUsuAutorizado,
 } = require("../middlewares/autenticadorMiddleware");
 
-const usuarioController = require("../controllers/usuarioController");
+const {usuarioController} = require("../controllers/usuarioController");
 
 const uploadFile = require("../util/uploader")("./app/public/imagem/perfil/");
 // const uploadFile = require("../util/uploader")();
