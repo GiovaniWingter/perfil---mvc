@@ -197,22 +197,22 @@ const usuarioController = {
             if (!req.file) {
                 console.log("Falha no carregamento");
             } else {
-                //Armazenando o caminho do arquivo salvo na pasta do projeto 
-                caminhoArquivo = "imagem/perfil/" + req.file.filename;
-                //Se houve alteração de imagem de perfil apaga a imagem anterior
-                if (dadosForm.img_perfil_pasta != caminhoArquivo) {
-                    removeImg(dadosForm.img_perfil_pasta);
-                }
-                dadosForm.img_perfil_pasta = caminhoArquivo;
-                dadosForm.img_perfil_banco = null;
-
-                // //Armazenando o buffer de dados binários do arquivo 
-                // dadosForm.img_perfil_banco = req.file.buffer;                
-                // //Apagando a imagem armazenada na pasta
-                // if(dadosForm.img_perfil_pasta != null ){
+                // //Armazenando o caminho do arquivo salvo na pasta do projeto 
+                // caminhoArquivo = "imagem/perfil/" + req.file.filename;
+                // //Se houve alteração de imagem de perfil apaga a imagem anterior
+                // if (dadosForm.img_perfil_pasta != caminhoArquivo) {
                 //     removeImg(dadosForm.img_perfil_pasta);
                 // }
-                // dadosForm.img_perfil_pasta = null; 
+                // dadosForm.img_perfil_pasta = caminhoArquivo;
+                // dadosForm.img_perfil_banco = null;
+
+                //Armazenando o buffer de dados binários do arquivo 
+                dadosForm.img_perfil_banco = req.file.buffer;                
+                //Apagando a imagem armazenada na pasta
+                if(dadosForm.img_perfil_pasta != null ){
+                    removeImg(dadosForm.img_perfil_pasta);
+                }
+                dadosForm.img_perfil_pasta = null; 
             }
             let resultUpdate = await usuarioModel.update(dadosForm, req.session.autenticado.id);
             if (!resultUpdate.isEmpty) {
