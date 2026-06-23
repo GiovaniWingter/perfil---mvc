@@ -1,12 +1,13 @@
 1 - Para adicionar as depencencias use:
-    npm config set strict-ssl false (se necessário)
+```plaintext
     npm install
-
+```
 2 - Execute o restore do Banco de dados:
-    abra o arquivo script.sql no workbench e execute-ouvindo
-
-3. Crie o arquivo `.env` com as seguintes chaves:
-    ```plaintext
+```plaintext
+    abra o arquivo script.sql no workbench e execute-o
+```
+3 - Crie o arquivo `.env` com as seguintes chaves:
+```plaintext
     DB_HOST        = ??????            
     DB_USER        = ??????            
     DB_PASSWORD    = ??????    
@@ -17,9 +18,9 @@
     ACESSTOKEN     = ??????
     PUBLICKEY      = ??????
     SECRET         = ??????
-    ```
+```
 
-4. Usuários cadastrados:
+4 - Usuários cadastrados:
 
     **Administrador**
     - Nome: Helvética
