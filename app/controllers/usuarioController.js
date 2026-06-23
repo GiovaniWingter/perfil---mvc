@@ -145,7 +145,6 @@ const usuarioController = {
                 var viaCep = { logradouro: "", bairro: "", localidade: "", uf: "" }
                 var cep = null;
             }
-            console.log(cep);
             let campos = {
                 nome_usu: results[0].nome_usuario, email_usu: results[0].email_usuario,
                 cep: cep,
@@ -233,7 +232,6 @@ const usuarioController = {
                     };
                     res.redirect("/perfil");
                 } else {
-                    console.log("3");
                     res.render("pages/perfil", { listaErros: null, valores: dadosForm });
                 }
             }
