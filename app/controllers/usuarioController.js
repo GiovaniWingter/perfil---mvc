@@ -188,7 +188,7 @@ const usuarioController = {
                 cep_usuario: req.body.cep ? req.body.cep.replace("-", "") : null,
                 numero_usuario: req.body.numero,
                 complemento_usuario: req.body.complemento,
-                img_perfil_banco: req.session.autenticado.img_perfil_banco,
+                img_perfil_banco: Buffer.from(req.session.autenticado.img_perfil_banco.replace(/^data:image\/\w+;base64,/, ''), 'base64'),
                 img_perfil_pasta: req.session.autenticado.img_perfil_pasta,
             };
             if (req.body.senha_usu != "") {
@@ -208,6 +208,7 @@ const usuarioController = {
 
                 //Armazenando o buffer de dados binários do arquivo 
                 dadosForm.img_perfil_banco = req.file.buffer;                
+                
                 //Apagando a imagem armazenada na pasta
                 if(dadosForm.img_perfil_pasta != null ){
                     removeImg(dadosForm.img_perfil_pasta);
@@ -232,7 +233,7 @@ const usuarioController = {
                     };
                     res.redirect("/perfil");
                 } else {
-                    res.render("pages/perfil", { listaErros: null, valores: dadosForm });
+                    res.render("pages/perfil", { listaErros: null, valores: req.body });
                 }
             }
         } catch (e) {
@@ -243,3 +244,4 @@ const usuarioController = {
 }
 
 module.exports = {usuarioController}
+
